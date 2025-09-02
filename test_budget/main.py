@@ -24,79 +24,62 @@ Output:
     - Responses are automatically logged to ./logs/ directory
     - Log files are named: response_[prompt_name]_[timestamp].txt
 """
+
 import argparse
+import os
+import sys
+import pprint
+import json
+
 from datetime import datetime
 from typing import Final
 from dotenv import load_dotenv
-import json
 from loguru import logger
-import os
-from openai import OpenAI
+
+from tools.tools import create_openai_request
 
 LOGS_PATH: Final[str] = "./logs"
 
-def read_prompt(filename='./prompts/prompt_perplexity_deep_research.txt'):
+
+def read_prompt(filename):
     try:
         with open(filename, 'r', encoding='utf-8') as file:
             return file.read().strip()
     except FileNotFoundError:
         print(f"Error: No se encontró el archivo '{filename}'")
-        return None
+        sys.exit(1)
     except Exception as e:
         print(f"Error al leer el archivo: {e}")
-        return None
+        sys.exit(1)
 
 
-def call_openai_api(prompt, api_key, model):
-    # when api_key=None, the OpenAI SDK might be falling back to environment variables or other default authentication methods.
-    # add an explicit check to avoid incurring into costs, e.g. when debug mode is on and no api calls are expected.
-    if not api_key:
-        logger.info("No API key provided, skipping OpenAI call")
-        return None
-
-    try:
-        client = OpenAI(api_key=api_key)
-        print(f"Enviando petición a OpenAI usando el modelo: {model}")
-        
-        response = client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "user", "content": prompt}
-            ]
-        )
-        return response
-    except Exception as e:
-        print(f"Error en la petición a OpenAI: {e}")
-        return None
-    
 def compose_log_message(response, **kwargs) -> str:
     result = ["=" * 50]
     # Handle OpenAI SDK response object
     if hasattr(response, 'choices') and len(response.choices) > 0:
         message = response.choices[0].message.content
-        result.append(message)
+        result.append(pprint.pformat(json.loads(message), width=80, depth=None))
     else:
-        result.append("Respuesta inesperada:")
-        result.append(str(response))
-
+        result.extend(("Respuesta inesperada:", str(response)))
     if hasattr(response, 'usage') and response.usage:
-        result.append("=" * 50)
-        result.append("\nTokens utilizados:")
-        result.append(f"  Prompt: {response.usage.prompt_tokens}")
-        result.append(f"  Completación: {response.usage.completion_tokens}")
-        result.append(f"  Total: {response.usage.total_tokens}")
-
-
+        result.extend(
+            (
+                "=" * 50,
+                "\nTokens utilizados:",
+                f"  Prompt:\t{response.usage.prompt_tokens}\tPrompt Cache:\t{response.usage.prompt_tokens_details.cached_tokens}",
+                f"  Completion:\t{response.usage.completion_tokens}\tReasoning:\t{response.usage.completion_tokens_details.reasoning_tokens}\tOutput:\t{response.usage.completion_tokens-response.usage.completion_tokens_details.reasoning_tokens}",
+                f"  Total:\t{response.usage.total_tokens}",
+            )
+        )
     if kwargs:
-        result.append("=" * 50)
-        result.append("kwargs:")
-        [result.append(f"\t{k}:{v}") for k,v in kwargs.items()]
-        # for k,v in kwargs:
-        #     result.append(f"{k}:{v}")
+        result.extend(("=" * 50, "kwargs:"))
+        [result.append(f"\t{k}:{v}") for k, v in kwargs.items()]
     return "\n".join(result)
+
 
 def get_date_time_str() -> str:
     return datetime.now().strftime("%Y%m%d_%H%M%S")
+
 
 def log_message(message: str, log_file: str) -> bool:
     try:
@@ -108,6 +91,7 @@ def log_message(message: str, log_file: str) -> bool:
     except Exception as e:
         logger.error(f"Error logging message to {log_file}: {e}")
         return False
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='OpenAI API client for sending prompts')
@@ -124,31 +108,33 @@ def main():
     logger.debug(f"Input arguments: {args}")
 
     # load api and model
-    api_key = os.getenv('OPENAI_API_KEY') if not args.debug else None
-    model = os.getenv('OPENAI_MODEL', 'gpt-3.5-turbo') if not args.model else args.model
+    api_key = None if args.debug else os.getenv('OPENAI_API_KEY')
+    model = args.model or os.getenv('OPENAI_MODEL', 'gpt-3.5-turbo')
 
     if not api_key and not args.debug:
-        print("Error: No se encontró OPENAI_API_KEY en el archivo .env")
-        print("Por favor, crea un archivo .env basándote en .env.example")
-        return
-    
+        logger.error("Error: No se encontró OPENAI_API_KEY en el archivo .env")
+        logger.error("Por favor, crea un archivo .env basándote en .env.example")
+        sys.exit(1)
+
     if api_key:
         logger.warning("API key set, API calls will incurr in costs.")
 
-    prompt = read_prompt(filename=args.prompt)
-    if not prompt:
-        return
+    if not (prompt := read_prompt(filename=args.prompt)):
+        logger.error(f"Error: No se encontró el prompt en el archivo {args.prompt}")
+        sys.exit(1)
 
     logger.info(f"Prompt leído del archivo: {args.prompt}")
 
-    if response := call_openai_api(prompt, api_key, model):
+    tool = create_openai_request(api_key, "chat_completion")
+    if response := tool.call(prompt=prompt, model=model):
+        breakpoint()
         logger.info("\nRespuesta de OpenAI:")
         message = compose_log_message(response, **args.__dict__)
         logger.info(f"Message:\n{message}")
         # log the message to a log file with a custom date and time
         logfilename = ["response", os.path.splitext(os.path.basename(args.prompt))[0], get_date_time_str()]
         log_message(message=message, log_file=os.path.join(LOGS_PATH, "_".join(logfilename) + ".txt") )
-    
+
 
 if __name__ == "__main__":
     main()

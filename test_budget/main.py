@@ -28,8 +28,6 @@ Output:
 import argparse
 import os
 import sys
-import pprint
-import json
 
 from datetime import datetime
 from typing import Final
@@ -51,30 +49,6 @@ def read_prompt(filename):
     except Exception as e:
         print(f"Error al leer el archivo: {e}")
         sys.exit(1)
-
-
-def compose_log_message(response, **kwargs) -> str:
-    result = ["=" * 50]
-    # Handle OpenAI SDK response object
-    if hasattr(response, 'choices') and len(response.choices) > 0:
-        message = response.choices[0].message.content
-        result.append(pprint.pformat(json.loads(message), width=80, depth=None))
-    else:
-        result.extend(("Respuesta inesperada:", str(response)))
-    if hasattr(response, 'usage') and response.usage:
-        result.extend(
-            (
-                "=" * 50,
-                "\nTokens utilizados:",
-                f"  Prompt:\t{response.usage.prompt_tokens}\tPrompt Cache:\t{response.usage.prompt_tokens_details.cached_tokens}",
-                f"  Completion:\t{response.usage.completion_tokens}\tReasoning:\t{response.usage.completion_tokens_details.reasoning_tokens}\tOutput:\t{response.usage.completion_tokens-response.usage.completion_tokens_details.reasoning_tokens}",
-                f"  Total:\t{response.usage.total_tokens}",
-            )
-        )
-    if kwargs:
-        result.extend(("=" * 50, "kwargs:"))
-        [result.append(f"\t{k}:{v}") for k, v in kwargs.items()]
-    return "\n".join(result)
 
 
 def get_date_time_str() -> str:
@@ -125,11 +99,10 @@ def main():
 
     logger.info(f"Prompt leído del archivo: {args.prompt}")
 
-    tool = create_openai_request(api_key, "chat_completion")
+    tool = create_openai_request(tool="response", api_key=api_key)
     if response := tool.call(prompt=prompt, model=model):
-        breakpoint()
         logger.info("\nRespuesta de OpenAI:")
-        message = compose_log_message(response, **args.__dict__)
+        message = tool.output(response, **args.__dict__)
         logger.info(f"Message:\n{message}")
         # log the message to a log file with a custom date and time
         logfilename = ["response", os.path.splitext(os.path.basename(args.prompt))[0], get_date_time_str()]

@@ -1,4 +1,5 @@
-
+import json
+import pprint
 from openai import OpenAI
 
 from tools.openairequest import OpenAIRequest
@@ -43,3 +44,26 @@ class ChatCompletion(OpenAIRequest):
             #     "search_exclude_urls": [],
             # },  # doesnt work with gpt-5
         )
+
+    def output(self, response, **kwargs):
+        result = ["=" * 50]
+        # Handle OpenAI SDK response object
+        if hasattr(response, 'choices') and len(response.choices) > 0:
+            message = response.choices[0].message.content
+            result.append(pprint.pformat(json.loads(message), width=80, depth=None))
+        else:
+            result.extend(("Respuesta inesperada:", str(response)))
+        if hasattr(response, 'usage') and response.usage:
+            result.extend(
+                (
+                    "=" * 50,
+                    "\nTokens utilizados:",
+                    f"  Prompt:\t{response.usage.prompt_tokens}\tPrompt Cached:\t{response.usage.prompt_tokens_details.cached_tokens}",
+                    f"  Completion:\t{response.usage.completion_tokens}\tReasoning:\t{response.usage.completion_tokens_details.reasoning_tokens}\tOutput:\t{response.usage.completion_tokens-response.usage.completion_tokens_details.reasoning_tokens}",
+                    f"  Total:\t{response.usage.total_tokens}",
+                )
+            )
+        if kwargs:
+            result.extend(("=" * 50, "kwargs:"))
+            [result.append(f"\t{k}:{v}") for k, v in kwargs.items()]
+        return "\n".join(result)

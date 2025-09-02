@@ -5,9 +5,11 @@ from tools.response import ResponseOpenAI
 from tools.mock import MockOpenAI
 
 
-def create_openai_request(api_key, tool) -> OpenAIRequest:
+def create_openai_request(tool, api_key=None) -> OpenAIRequest:
+    if not api_key:
+        return MockOpenAI(api_key)
+
     return {
         "chat_completion": ChatCompletion(api_key),
         "response": ResponseOpenAI(api_key),
-        "mock": MockOpenAI(api_key)
     }[tool]

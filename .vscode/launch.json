@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "Main",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "test_budget/main.py",
+            "args": [
+                "--prompt",
+                "test_budget/prompts/prompt_01.txt",
+                "--model",
+                "gpt-5"
+            ],
+            "console": "integratedTerminal"
+        }
+
+    ]
+}

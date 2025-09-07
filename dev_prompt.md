@@ -1,21 +1,32 @@
 ## To Do 
 - [x] Use case scoping
-- [ ] Basic prompt scoping
+- [x] Basic prompt scoping
   - [x] Add notes
-  - [ ] Prompt 01: Initial educated guess
+  - [x] Prompt 01: Initial educated guess
     - [x] Compare with insta post & OpenAI startup resource
     - [x] Save results of the current prompt - change the code to log the prompt to a log file. Add the log file to .gitignore
-    - [ ] Sanity check of the first version
-- [ ] [Prompt 02: Use OpenAI API](https://platform.openai.com/docs/guides/text?api-mode=responses)
-  - [ ] Need a quick tutorial of the OpenAI API (15-30min video on YT)
-    - [ ] Clarify concepts: tokens usage, completiion, total, roles (system vs user), etc.
-  - [ ] Goal: Use a more efficient library for prompting and sanity check of the existing script - Sanity check. 
-  - [ ] (If needed) Adapt the prompt for ChatGPT-5 & test
+    - [x] Sanity check of the first version
+- [ ] [Prompt 02: Use OpenAI API](https://platform.openai.com/docs/guides/text?api-mode=responses). Goal: Use a more efficient library for prompting:
+  - [x] Quick tutorial of the OpenAI API (15-30min video on YT)
+    - [x] Clarify concepts: tokens usage, completiion, total, roles (system vs user), etc.
+  - [ ] Adapt the prompt for ChatGPT-5 & test: 
+    - [ ] [Switch to response](https://platform.openai.com/docs/api-reference/responses/create)
+    - [ ] [Instructions API](https://platform.openai.com/docs/guides/text?api-mode=responses&lang=python#message-roles-and-instruction-following): Use developer/user roles. The user will just feed the input parameters. 
+    - [ ] [Reusable prompts (for prod)](https://platform.openai.com/docs/guides/text?api-mode=responses&lang=python#reusable-prompts)
+    - [ ] [Structured output (for prod)](https://platform.openai.com/docs/guides/structured-outputs)
+    - [ ] [Model evaluation (before going into prod)](https://platform.openai.com/docs/guides/evals?api-mode=responses)
+  - [ ] Analytics research (AI-powered or Statista powered): wedding costs
   - [ ] Explore with different combinations of input parameters
   - [ ] Assess if the results are consistent - Quick notebook with a couple of viz should help here. 
-- [ ] Prompt 03: Deep research within the prompt (different model? or endpoint?)
+  - [ ] Assess if the allocated budget per category makes sense.
+- [ ] (If needed) Analytics script / notebook:
+  - [ ] Budget total
+  - [ ] Categories (present or missing) / allocated budget 
+  - [ ] Variations across iterations (box plots, missing categories, total percentage of each category with respect to the total budget)
+- [ ] Prompt 03: Web research within the prompt (different model? or endpoint?)
   - [ ] [Deep Research within OpenAI API](https://cookbook.openai.com/examples/deep_research_api/introduction_to_deep_research_api?utm_source=chatgpt.com)
   - [ ] Check resources here for deep research within the API - https://openai.com/startups/?utm_source=linkedin
+- [ ] Prompt 04: Hierarchichal prompt 
 - [ ] Explore different models, feats (context window, problem-solving capability, etc.)
   - [ ] Use OpenAI python library
 - [ ] Test models
@@ -120,7 +131,26 @@ Output format:
   * Create a json file with the calculated budget
   * (Optional) Iterate budget
 
-## Prompt 02: Propose an budget based on research done upon request of the budget
+### Observations
+
+    Budget Variations:
+      - File 1 (2025-08-30): Total ~$49,000, 16 categories
+      - File 2 (2025-08-31 21:27): Total ~$49,550, 15 categories (missing guest transportation)
+      - File 3 (2025-08-31 21:34): Total ~$49,100, 15 categories (missing photo booth)
+
+    Key Differences:
+      - Catering costs vary significantly: $18,000 → $17,500 → $20,000
+      - Some categories missing in later runs (transportation, photo booth)
+      - Token usage fluctuates: 5,475 → 4,820 → 5,907
+      - Debug mode was enabled for the last two runs
+
+    Observations:
+      - Consistent prompt file usage (./prompts/prompt_01.txt)
+      - Model consistently using gpt-5
+      - Similar budget totals despite category variations
+      - Standard wedding expense categories represented
+
+## Prompt 03: Propose an budget based on research done upon request of the budget
 
 ## General Notes
 - App users will have the option to add custom categories in addition to the default ones in the app. 
@@ -217,3 +247,21 @@ While not on your initial list, these are essential for a complete budget and su
 * Other (rentals, transportation, hotel room for the night of, etc.): 5%
 
 </div>
+
+
+### OpenAI API
+
+- Role: "System" is used to set the tone fo the chat
+- Role: "User" is used to indicate that the message comes from the user. 
+- Role: "assisstant" text created by the chatbot
+- We could use the n parameters to request multiple budgets at once
+- Temperature controls randomness into the output. It does not seem useful for this case, but it would be good to keep it in mind. 
+
+### Note on used tokens
+There are several reasons why completion tokens can be higher than prompt tokens even when the visible text is shorter:
+
+  1. Token encoding efficiency varies: Some words/phrases tokenize into fewer tokens than others. The AI's JSON response might use words that require more tokens per character.
+  1. Hidden processing tokens: The completion count may include internal processing tokens that aren't visible in the final output - reasoning, formatting decisions, etc.
+  1. Your prompt file: Your actual prompt is in ./prompts/prompt_01.txt (1,686 tokens). This might be more concise than you think, or use efficiently-tokenized language.
+  1. JSON structure overhead: The structured JSON format with long category names like "WEDDING_SUBCATEGORY_WEDDING_VENUES" is token-expensive.
+  1. Model-specific tokenization: Different models tokenize text differently. Some phrases might tokenize more efficiently than others.

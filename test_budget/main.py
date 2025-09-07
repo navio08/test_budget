@@ -72,6 +72,9 @@ def parse_arguments():
     parser.add_argument("--debug", action='store_true', help='Enable debug mode')
     parser.add_argument("--model", required=False, default=None)
     parser.add_argument("--prompt", required=False, default="./prompts/prompt_perplexity_deep_research.txt")
+    parser.add_argument("--developer_prompt", required=False, default="./prompts/prompt_02_developer.txt")
+    parser.add_argument("--reasoning_effort", required=False, default="low")
+    parser.add_argument("--temperature", required=False, default=1)
     return parser.parse_args()
 
 
@@ -96,11 +99,15 @@ def main():
     if not (prompt := read_prompt(filename=args.prompt)):
         logger.error(f"Error: Prompt not found in file {args.prompt}")
         sys.exit(1)
+    
+    if not (developer_prompt := read_prompt(filename=args.developer_prompt)):
+        logger.error(f"Error: Prompt not found in file {args.developer_prompt}")
+        sys.exit(1)
 
     logger.info(f"Prompt read from file: {args.prompt}")
 
     tool = create_openai_request(tool="response", api_key=api_key)
-    if response := tool(prompt=prompt, model=model):
+    if response := tool(prompt=prompt, model=model, developer_prompt=developer_prompt, reasoning_effort=args.reasoning_effort, temperature=args.temperature):
         logger.info("\nOpenAI Response:")
         message = tool.output(response, **args.__dict__)
         logger.info(f"Message:\n{message}")

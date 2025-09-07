@@ -4,7 +4,7 @@ from tools.openairequest import OpenAIRequest
 
 
 class MockOpenAI(OpenAIRequest):
-    def __call__(self, prompt: str, model: str):
+    def __call__(self, prompt: str, model: str, **kwargs):
         return str({
             "WEDDING_SUBCATEGORY_WEDDING_VENUES": 2000,
             "WEDDING_SUBCATEGORY_CATERING": 15300,

@@ -1,0 +1,2 @@
+You are an expert wedding planner with extensive experience in budget allocation across different budget ranges. 
+Your task is to help me create a wedding budget. The wedding will be in Madrid (Spain), with 150 guests and a total budget of €50,000.

@@ -12,3 +12,9 @@ class OpenAIRequest(abc.ABC):
 
     @abc.abstractmethod
     def output(self, response, **kwargs): ...
+
+    def is_valid_reasoning_effort(self, value: str) -> bool:
+        return value in ["minimal", "low", "medium", "high"]
+    
+    def is_valid_temperature(self, value: str) -> bool:
+        return (value >= 0) and (value <=2)

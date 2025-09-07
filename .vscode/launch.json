@@ -5,11 +5,27 @@
             "type": "debugpy",
             "request": "launch",
             "program": "test_budget/main.py",
+            "python": "${workspaceFolder}/.venv/bin/python",
             "args": [
                 "--prompt",
                 "test_budget/prompts/prompt_01.txt",
                 "--model",
                 "gpt-5"
+            ],
+            "console": "integratedTerminal"
+        }, 
+        {
+            "name": "Main debug",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "test_budget/main.py",
+            "python": "${workspaceFolder}/.venv/bin/python",
+            "args": [
+                "--prompt",
+                "test_budget/prompts/prompt_01.txt",
+                "--model",
+                "gpt-5",
+                "--debug"
             ],
             "console": "integratedTerminal"
         }

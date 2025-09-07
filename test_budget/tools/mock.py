@@ -1,9 +1,11 @@
+import pprint
+import ast
 from tools.openairequest import OpenAIRequest
 
 
 class MockOpenAI(OpenAIRequest):
-    def call(self):
-        return {
+    def call(self, prompt: str, model: str):
+        return str({
             "WEDDING_SUBCATEGORY_WEDDING_VENUES": 2000,
             "WEDDING_SUBCATEGORY_CATERING": 15300,
             "WEDDING_SUBCATEGORY_LAWYER": 150,
@@ -18,4 +20,13 @@ class MockOpenAI(OpenAIRequest):
             "WEDDING_SUBCATEGORY_HAIR_SALON_BRIDE": 250,
             "WEDDING_SUBCATEGORY_BAKERY": 300,
             "WEDDING_SUBCATEGORY_WEDDING_DECORATION": 300
-        }
+        })
+
+    def output(self, response, **kwargs):
+        result = ["=" * 50]
+        # Handle OpenAI SDK response object
+        result.append(pprint.pformat(ast.literal_eval(response), width=80, depth=None))
+        if kwargs:
+            result.extend(("=" * 50, "kwargs:"))
+            [result.append(f"\t{k}:{v}") for k, v in kwargs.items()]
+        return "\n".join(result)

@@ -5,7 +5,7 @@ from tools.openairequest import OpenAIRequest
 
 
 class ResponseOpenAI(OpenAIRequest):
-    def call(self, prompt, model="gpt-3.5-turbo"):
+    def __call__(self, prompt, model="gpt-3.5-turbo"):
         return OpenAI(api_key=self.api_key).responses.create(
             background=False,
             include=None,

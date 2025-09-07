@@ -44,10 +44,10 @@ def read_prompt(filename):
         with open(filename, 'r', encoding='utf-8') as file:
             return file.read().strip()
     except FileNotFoundError:
-        print(f"Error: No se encontró el archivo '{filename}'")
+        print(f"Error: File '{filename}' not found")
         sys.exit(1)
     except Exception as e:
-        print(f"Error al leer el archivo: {e}")
+        print(f"Error reading file: {e}")
         sys.exit(1)
 
 
@@ -86,22 +86,22 @@ def main():
     model = args.model or os.getenv('OPENAI_MODEL', 'gpt-3.5-turbo')
 
     if not api_key and not args.debug:
-        logger.error("Error: No se encontró OPENAI_API_KEY en el archivo .env")
-        logger.error("Por favor, crea un archivo .env basándote en .env.example")
+        logger.error("Error: OPENAI_API_KEY not found in .env file")
+        logger.error("Please create a .env file based on .env.example")
         sys.exit(1)
 
     if api_key:
         logger.warning("API key set, API calls will incurr in costs.")
 
     if not (prompt := read_prompt(filename=args.prompt)):
-        logger.error(f"Error: No se encontró el prompt en el archivo {args.prompt}")
+        logger.error(f"Error: Prompt not found in file {args.prompt}")
         sys.exit(1)
 
-    logger.info(f"Prompt leído del archivo: {args.prompt}")
+    logger.info(f"Prompt read from file: {args.prompt}")
 
     tool = create_openai_request(tool="response", api_key=api_key)
-    if response := tool.call(prompt=prompt, model=model):
-        logger.info("\nRespuesta de OpenAI:")
+    if response := tool(prompt=prompt, model=model):
+        logger.info("\nOpenAI Response:")
         message = tool.output(response, **args.__dict__)
         logger.info(f"Message:\n{message}")
         # log the message to a log file with a custom date and time

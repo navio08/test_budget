@@ -6,7 +6,7 @@ from tools.openairequest import OpenAIRequest
 
 
 class ChatCompletion(OpenAIRequest):
-    def call(self, prompt, model="gpt-3.5-turbo", ):
+    def __call__(self, prompt, model="gpt-3.5-turbo", ):
         return OpenAI(api_key=self.api_key).chat.completions.create(
             model=model,
             messages=[{"role": "user", "content": prompt}],

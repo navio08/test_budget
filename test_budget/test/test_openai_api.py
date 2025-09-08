@@ -7,6 +7,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from test_budget.main import LOGS_PATH, get_date_time_str, log_message, read_prompt
 from test_budget.tools.tools import create_openai_request
 
+"""
+Run test with ```python -m pytest --verbose test_budget/test```
+"""
+
 # Test data with various parameter combinations
 @pytest.mark.parametrize(
     "prompt,model,developer_prompt,reasoning_effort,temperature",
@@ -45,11 +49,14 @@ def test_tool_actual_calls(prompt, model, developer_prompt, reasoning_effort, te
     assert "WEDDING_SUBCATEGORY" in response
 
 @pytest.mark.parametrize(
-    "prompt_file_path,model,developer_prompt_file_path,reasoning_effort,temperature",
+    "prompt_file_path,developer_prompt_file_path",
     [
-        ("test_budget/prompts/prompt_02_user_low_budget.txt", "gpt-5", "test_budget/prompts/prompt_02_developer.txt", "low", 1),
+        ("test_budget/prompts/prompt_02_user_low_budget.txt", "test_budget/prompts/prompt_02_developer.txt"),
     ]
 )
+@pytest.mark.parametrize("model", ["gpt-5"])
+@pytest.mark.parametrize("reasoning_effort", ["low"])
+@pytest.mark.parametrize("temperature", [1.0])
 def test_tool_with_real_api(prompt_file_path, model, developer_prompt_file_path, reasoning_effort, temperature):
     """Test the tool with real OpenAI API calls (requires API key)."""
     load_dotenv()  # Load environment variables from .env file

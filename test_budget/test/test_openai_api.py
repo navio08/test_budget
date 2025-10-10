@@ -51,11 +51,16 @@ def test_tool_actual_calls(prompt, model, developer_prompt, reasoning_effort, te
 @pytest.mark.parametrize(
     "prompt_file_path,developer_prompt_file_path",
     [
-        ("test_budget/prompts/prompt_02_user_low_budget.txt", "test_budget/prompts/prompt_02_developer.txt"),
+        # ("test_budget/prompts/prompt_user_01_user_low_budget.txt", "test_budget/prompts/prompt_02_developer.txt"),
+        # ("test_budget/prompts/prompt_user_02_medium_budget.txt", "test_budget/prompts/prompt_02_developer.txt"),
+        ("test_budget/prompts/prompt_user_03_high_budget.txt", "test_budget/prompts/prompt_02_developer.txt"),
+        # ("test_budget/prompts/prompt_user_01_user_low_budget.txt", "test_budget/prompts/prompt_03_developer.txt"),
+        # ("test_budget/prompts/prompt_user_02_medium_budget.txt", "test_budget/prompts/prompt_03_developer.txt"),
+        ("test_budget/prompts/prompt_user_03_high_budget.txt", "test_budget/prompts/prompt_03_developer.txt"),
     ]
 )
 @pytest.mark.parametrize("model", ["gpt-5"])
-@pytest.mark.parametrize("reasoning_effort", ["low"])
+@pytest.mark.parametrize("reasoning_effort", ["medium"])
 @pytest.mark.parametrize("temperature", [1.0])
 def test_tool_with_real_api(prompt_file_path, model, developer_prompt_file_path, reasoning_effort, temperature):
     """Test the tool with real OpenAI API calls (requires API key)."""

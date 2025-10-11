@@ -51,12 +51,22 @@ def test_tool_actual_calls(prompt, model, developer_prompt, reasoning_effort, te
 @pytest.mark.parametrize(
     "prompt_file_path,developer_prompt_file_path",
     [
+        ### Prompt 02
         # ("test_budget/prompts/prompt_user_01_user_low_budget.txt", "test_budget/prompts/prompt_02_developer.txt"),
         # ("test_budget/prompts/prompt_user_02_medium_budget.txt", "test_budget/prompts/prompt_02_developer.txt"),
-        ("test_budget/prompts/prompt_user_03_high_budget.txt", "test_budget/prompts/prompt_02_developer.txt"),
+        # ("test_budget/prompts/prompt_user_03_high_budget.txt", "test_budget/prompts/prompt_02_developer.txt"),
+        ### Prompt 03
         # ("test_budget/prompts/prompt_user_01_user_low_budget.txt", "test_budget/prompts/prompt_03_developer.txt"),
         # ("test_budget/prompts/prompt_user_02_medium_budget.txt", "test_budget/prompts/prompt_03_developer.txt"),
-        ("test_budget/prompts/prompt_user_03_high_budget.txt", "test_budget/prompts/prompt_03_developer.txt"),
+        # ("test_budget/prompts/prompt_user_03_high_budget.txt", "test_budget/prompts/prompt_03_developer.txt"),
+        ### Prompt 03.2
+        # ("test_budget/prompts/prompt_user_01_user_low_budget.txt", "test_budget/prompts/prompt_03.2_developer.txt"),
+        # ("test_budget/prompts/prompt_user_02_medium_budget.txt", "test_budget/prompts/prompt_03.2_developer.txt"),
+        # ("test_budget/prompts/prompt_user_03_high_budget.txt", "test_budget/prompts/prompt_03.2_developer.txt"),
+        ### Prompt 03.3
+        ("test_budget/prompts/prompt_user_01_user_low_budget.txt", "test_budget/prompts/prompt_03.3_developer.txt"),
+        # ("test_budget/prompts/prompt_user_02_medium_budget.txt", "test_budget/prompts/prompt_03.3_developer.txt"),
+        # ("test_budget/prompts/prompt_user_03_high_budget.txt", "test_budget/prompts/prompt_03.3_developer.txt"),
     ]
 )
 @pytest.mark.parametrize("model", ["gpt-5"])

@@ -18,7 +18,7 @@ Examples:
     python main_openai.py --debug
     python main_openai.py --model gpt-4 --prompt ./my_prompt.txt
     python main_openai.py --prompt ./prompts/prompt_01.txt --model gpt-5 --debug
-
+    python ./test_budget/main_openai.py --prompt ./test_budget/prompts/prompt_user_01_user_low_budget.txt --developer_prompt test_budget/prompts/prompt_03.3_developer.txt --model gpt-5 --reasoning_effort medium --debug
 Output:
     - Console output shows the API response
     - Responses are automatically logged to ./logs/ directory

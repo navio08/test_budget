@@ -1,2 +1,2 @@
 Your task is to help me create a wedding budget. 
-The wedding will be in Madrid (Spain), with 30 guests and the available budget for the wedding, excluding venue and catering, is 8100 euros. 
+The wedding will be in Madrid (Spain) and the available budget for the wedding, excluding venue and catering, is 8100 euros. 

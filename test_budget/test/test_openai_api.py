@@ -69,8 +69,12 @@ def test_tool_actual_calls(prompt, model, developer_prompt, reasoning_effort, te
         # ("test_budget/prompts/prompt_user_03_high_budget.txt", "test_budget/prompts/prompt_03.3_developer.txt"),
         ### Prompt 04
         # ("test_budget/prompts/prompt_user_04_user_low_budget.txt", "test_budget/prompts/prompt_04_developer.txt"),
-        ("test_budget/prompts/prompt_user_05_user_medium_budget.txt", "test_budget/prompts/prompt_04_developer.txt"),
-        ("test_budget/prompts/prompt_user_06_user_high_budget.txt", "test_budget/prompts/prompt_04_developer.txt"),
+        # ("test_budget/prompts/prompt_user_05_user_medium_budget.txt", "test_budget/prompts/prompt_04_developer.txt"),
+        # ("test_budget/prompts/prompt_user_06_user_high_budget.txt", "test_budget/prompts/prompt_04_developer.txt"),
+        ### Prompt 04
+        # ("test_budget/prompts/prompt_user_04_user_low_budget.txt", "test_budget/prompts/prompt_05_developer.txt"),
+        ("test_budget/prompts/prompt_user_05_user_medium_budget.txt", "test_budget/prompts/prompt_05_developer.txt"),
+        ("test_budget/prompts/prompt_user_06_user_high_budget.txt", "test_budget/prompts/prompt_05_developer.txt"),
     ]
 )
 @pytest.mark.parametrize("model", ["gpt-5"])

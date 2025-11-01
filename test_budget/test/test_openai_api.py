@@ -71,10 +71,14 @@ def test_tool_actual_calls(prompt, model, developer_prompt, reasoning_effort, te
         # ("test_budget/prompts/prompt_user_04_user_low_budget.txt", "test_budget/prompts/prompt_04_developer.txt"),
         # ("test_budget/prompts/prompt_user_05_user_medium_budget.txt", "test_budget/prompts/prompt_04_developer.txt"),
         # ("test_budget/prompts/prompt_user_06_user_high_budget.txt", "test_budget/prompts/prompt_04_developer.txt"),
-        ### Prompt 04
+        ### Prompt 05
         # ("test_budget/prompts/prompt_user_04_user_low_budget.txt", "test_budget/prompts/prompt_05_developer.txt"),
-        ("test_budget/prompts/prompt_user_05_user_medium_budget.txt", "test_budget/prompts/prompt_05_developer.txt"),
-        ("test_budget/prompts/prompt_user_06_user_high_budget.txt", "test_budget/prompts/prompt_05_developer.txt"),
+        # ("test_budget/prompts/prompt_user_05_user_medium_budget.txt", "test_budget/prompts/prompt_05_developer.txt"),
+        # ("test_budget/prompts/prompt_user_06_user_high_budget.txt", "test_budget/prompts/prompt_05_developer.txt"),
+        ### Prompt 06
+        ("test_budget/prompts/prompt_user_07_user_low_budget.txt", "test_budget/prompts/prompt_06_developer.txt"),
+        ("test_budget/prompts/prompt_user_08_user_medium_budget.txt", "test_budget/prompts/prompt_06_developer.txt"),
+        ("test_budget/prompts/prompt_user_09_user_high_budget.txt", "test_budget/prompts/prompt_06_developer.txt"),
     ]
 )
 @pytest.mark.parametrize("model", ["gpt-5"])
